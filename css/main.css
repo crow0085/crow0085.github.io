@@ -30,6 +30,10 @@ body {
     padding-right: 5%;
 }
 
+#nav_console_write {
+    padding-left: 5% !important;
+}
+
 #footer {
     position: absolute;
     bottom: 0;
