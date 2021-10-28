@@ -34,6 +34,13 @@ body {
     padding-left: 5% !important;
 }
 
+.body_content {
+    width: 100%;
+    position: relative;
+    padding-top: 50px;
+    min-height: 100vh;
+}
+
 #footer {
     position: absolute;
     bottom: 0;
