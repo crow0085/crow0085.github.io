@@ -25,6 +25,7 @@
 <script>
     $(function() {
         var current = location.pathname;
+        current = current.replace("/", "");
         console.log(current);
         $('#nav li a').each(function() {
             var $this = $(this);
