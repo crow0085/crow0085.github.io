@@ -1,0 +1,123 @@
+﻿@page
+@model Lab3.Pages.RegistrationModel
+@{
+}
+
+@using AcademicManagement;
+
+
+<div class="row offset-md-2 col-md-2">
+    <h3>Registrations</h3>
+</div>
+<hr />
+<form method="post">
+
+    <div class="row">
+
+        <div class="offset-md-2 col-md-2">
+            <select class="form-group" id="student-select" asp-items="Model.Options" asp-for="SelectedStudentID">
+                <option value="" selected hidden disabled>Choose a student</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary" hidden type="submit" id="btn-select-student" value="submit" asp-page-handler="StudentSelected">Get Registrations</button>
+        </div>
+    </div>
+
+
+    @if (Model.SelectedStudentID != null && Model.SelectedStudentID != "")
+    {
+        if (Model.SelectedStudentRecords != null && Model.SelectedStudentRecords.Count > 0)
+        {
+
+            <p class="row mt-xl-3 offset-md-2 col-md-8 bg-info"> @Model.SelectedStudentID has enrolled in the following courses: </p>
+
+            <table class="table row mt-xl-3 offset-md-2 col-md-8">
+                <tr>
+                    <th>
+                        <a asp-page="Registration" asp-route-orderby="code"> Course Code </a>
+                    </th>
+                    <th>
+                        <a asp-page="Registration" asp-route-orderby="title"> Course Title </a>
+                    </th>
+                    <th>
+                        <a asp-page="Registration" asp-route-orderby="grade"> Grade </a>
+                    </th>
+                </tr>
+
+                @{
+                    for (int i = 0; i < Model.SelectedStudentRecords.Count; i++)
+                    {
+                        AcademicRecord record = Model.SelectedStudentRecords[i];
+                        Course course = DataAccess.GetAllCourses().Where(c => c.CourseCode == record.CourseCode).First();
+                        string grade = record.Grade == -100 ? "" : record.Grade.ToString();
+
+                        <tr>
+                            <td>
+                                <input type="hidden" asp-for="@Model.SelectedStudentRecords[i].CourseCode" />
+                                @course.CourseCode
+                            </td>
+                            <td>
+                                @course.CourseTitle
+                            </td>
+                            <td>
+                                <input class="form-control" type="number" min="0" max="100" asp-for="@Model.SelectedStudentRecords[i].Grade" value="@grade" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+            <div class="row offset-md-2 col-md-2">
+                <button class="btn btn-primary" type="submit" value="submit" asp-page-handler="Grades">Submit Grades</button>
+            </div>
+        }
+        else if (Model.SelectedStudentRecords == null || Model.SelectedStudentRecords.Count == 0)
+        {
+            <p class="row mt-xl-3 offset-md-2 col-md-8 bg-info"> @Model.SelectedStudentID has not enrolled in any courses. Select courses to register </p>
+
+            <div class="row">
+                <table class="offset-md-2 col-md-8 table">
+                    <tr>
+                        <th>
+                            <a asp-page="Registration" asp-route-orderby="code"> Course Code </a>
+                        </th>
+                        <th>
+                            <a asp-page="Registration" asp-route-orderby="title"> Course Title </a>
+                        </th>
+                        <th>Check to Register</th>
+                    </tr>
+                    @for (int i = 0; i < Model.CourseSelections.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Model.CourseSelections[i].CourseCode
+                            </td>
+                            <td>
+                                @Model.CourseSelections[i].CourseTitle
+                            </td>
+                            <td>
+                                <input type="checkbox" name="SelectedCoursesID" value="@Model.CourseSelections[i].CourseCode" />
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <div class="row offset-md-2 col-md-2">
+                <button class="btn btn-primary" type="submit" value="submit" asp-page-handler="Register">Register selected courses</button>
+            </div>
+        }
+    }
+
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        $("#student-select").change(function () {
+            var getRegistration = document.getElementById("btn-select-student");
+            getRegistration.click();
+        });
+
+    </script>
+}
